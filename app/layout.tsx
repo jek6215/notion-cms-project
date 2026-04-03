@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Next.js Starter",
-  description: "Next.js + shadcn/ui 스타터킷",
+  title: "공지사항",
+  description: "Notion 기반 팀 공지사항 보드",
 }
 
 export default function RootLayout({

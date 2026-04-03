@@ -1,43 +1,32 @@
 import { Skeleton } from "@/components/ui/skeleton"
 
+// 공지사항 목록 로딩 스켈레톤
 export default function Loading() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16">
-      {/* Hero 스켈레톤 */}
-      <section className="flex flex-col items-center gap-6">
-        <Skeleton className="h-6 w-32 rounded-full" />
-        <Skeleton className="h-12 w-80" />
-        <Skeleton className="h-12 w-64" />
-        <Skeleton className="h-6 w-96" />
-        <div className="flex gap-3">
-          <Skeleton className="h-11 w-36" />
-          <Skeleton className="h-11 w-28" />
-        </div>
-      </section>
+    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+      <Skeleton className="mb-2 h-8 w-32" />
+      <Skeleton className="mb-8 h-4 w-64" />
 
-      {/* 기술 스택 스켈레톤 */}
-      <section className="mt-20">
-        <Skeleton className="mx-auto mb-6 h-8 w-32" />
-        <div className="flex flex-wrap justify-center gap-2">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <Skeleton key={i} className="h-6 w-20 rounded-full" />
-          ))}
-        </div>
-      </section>
+      {/* 카테고리 탭 스켈레톤 */}
+      <div className="mb-6 flex gap-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-9 w-20 rounded-md" />
+        ))}
+      </div>
 
-      {/* 기능 카드 스켈레톤 */}
-      <section className="mt-20">
-        <Skeleton className="mx-auto mb-8 h-8 w-24" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-lg border p-6">
-              <Skeleton className="mb-2 h-5 w-24" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="mt-1 h-4 w-3/4" />
+      {/* 공지 카드 스켈레톤 */}
+      <div className="flex flex-col gap-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="rounded-lg border p-5">
+            <div className="mb-2 flex items-center gap-2">
+              <Skeleton className="h-5 w-12 rounded-full" />
+              <Skeleton className="h-4 w-24" />
             </div>
-          ))}
-        </div>
-      </section>
+            <Skeleton className="mb-1 h-5 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
