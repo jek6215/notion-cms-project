@@ -80,7 +80,7 @@ Notion을 CMS로 활용한 팀/스터디/사내 공지 게시판 MVP
 > **예상 소요**: 2일
 > **완료 기준**: 각 컴포넌트 독립 렌더링 확인 + 단위 테스트 통과 + Playwright MCP로 UI 컴포넌트 브라우저 렌더링 검증 통과
 
-- [ ] **5단계: TypeScript 타입 정의** - 우선순위
+- [x] **5단계: TypeScript 타입 정의** - 우선순위
   - `types/notice.ts` 생성
   - Notice 인터페이스 (id, title, summary, category, isPinned, publishedAt, isPublic)
   - NoticeBlock 타입 (paragraph, heading_1/2/3, bulleted_list_item, numbered_list_item, code, image, quote, callout, divider)
