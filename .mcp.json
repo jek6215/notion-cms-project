@@ -2,7 +2,10 @@
   "mcpServers": {
     "context7": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
     },
     "filesystem": {
       "command": "npx",
@@ -14,14 +17,33 @@
     },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"]
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
     },
     "shrimp-task-manager": {
       "command": "node",
-      "args": ["C:\\Users\\Owner\\mcp-shrimp-task-manager\\dist\\index.js"],
+      "args": [
+        "C:\\Users\\Owner\\mcp-shrimp-task-manager\\dist\\index.js"
+      ],
       "env": {
         "DATA_DIR": "C:\\Users\\Owner\\workspace\\notion-cms-project\\shrimp-data"
       }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": [
+        "shadcn@latest",
+        "mcp"
+      ]
     }
   }
 }
