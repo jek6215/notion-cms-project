@@ -1,0 +1,445 @@
+{
+  "tasks": [
+    {
+      "id": "31ec17e9-a622-45aa-ae1d-ea9ad476b74a",
+      "name": "5단계: TypeScript 타입 정의",
+      "description": "types/notice.ts 생성. Notice, NoticeBlock, RichText 인터페이스 및 매퍼 함수 시그니처 정의. 모든 후속 단계의 타입 기반.",
+      "notes": "구현 코드 없이 타입과 함수 시그니처만. @notionhq/client의 PageObjectResponse, BlockObjectResponse 타입 import해서 매퍼 시그니처에 활용.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-04-06T00:06:53.339Z",
+      "updatedAt": "2026-04-06T00:06:53.339Z",
+      "relatedFiles": [
+        {
+          "path": "types/notice.ts",
+          "type": "CREATE",
+          "description": "도메인 타입 정의 파일"
+        },
+        {
+          "path": "docs/PRD.md",
+          "type": "REFERENCE",
+          "description": "데이터 모델 및 블록 타입 목록 참고"
+        }
+      ],
+      "implementationGuide": "1. types/notice.ts 생성\n2. RichText 인터페이스: { text: string; annotations: { bold, italic, strikethrough, code, color: string }; href: string | null }\n3. Notice 인터페이스: { id, title, summary, category, isPinned, publishedAt, isPublic }\n4. NoticeBlock 유니온 타입: type 필드로 paragraph/heading_1~3/bulleted_list_item/numbered_list_item/code/image/quote/callout/divider 구분\n5. 매퍼 함수 시그니처만 정의(구현은 lib/notion.ts에서): mapNotionPageToNotice, mapNotionBlockToNoticeBlock",
+      "verificationCriteria": "npm run build 타입 오류 없음. Notice/NoticeBlock/RichText 타입이 PRD.md 데이터 모델과 일치. TypeScript strict 모드 통과.",
+      "analysisResult": "RoadMap.md 기반 Notion CMS 공지사항 게시판 MVP. Phase 1 완료(Next.js 16 + shadcn/ui + 훅 + 플레이스홀더). Phase 2~5를 5단계→16단계 순서로 구현. 핵심 제약: Next.js 16 params/searchParams는 Promise 타입, Notion API는 서버 컴포넌트 전용, revalidate=60, TDD(테스트→구현→통과), 각 단계 완료 후 Playwright MCP 검증."
+    },
+    {
+      "id": "e18098f8-2357-471c-8a0e-36ea1657ccc8",
+      "name": "6단계: Notion API 클라이언트 래퍼",
+      "description": "lib/notion.ts 생성. getNotices/getNotice/getBlocks 함수 구현 및 단위 테스트 작성.",
+      "notes": "@notionhq/client는 Next.js fetch 캐시와 자동 통합 안 됨. 페이지 레벨 revalidate=60으로 처리(페이지 파일에서 설정). lib/notion.ts는 서버 전용 - 'server-only' 패키지 고려.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "31ec17e9-a622-45aa-ae1d-ea9ad476b74a"
+        }
+      ],
+      "createdAt": "2026-04-06T00:06:53.339Z",
+      "updatedAt": "2026-04-06T00:06:53.339Z",
+      "relatedFiles": [
+        {
+          "path": "lib/notion.ts",
+          "type": "CREATE",
+          "description": "Notion API 래퍼"
+        },
+        {
+          "path": "__tests__/notion.test.ts",
+          "type": "CREATE",
+          "description": "단위 테스트"
+        },
+        {
+          "path": "types/notice.ts",
+          "type": "DEPENDENCY",
+          "description": "도메인 타입"
+        },
+        {
+          "path": ".env.local.example",
+          "type": "REFERENCE",
+          "description": "환경변수 참고"
+        }
+      ],
+      "implementationGuide": "1. lib/notion.ts: NOTION_API_KEY, NOTION_DATABASE_ID 없으면 throw\n2. getNotices(category?): filter 공개여부=true, sort 게시일 DESC, Notice[] 반환\n3. getNotice(id): 단건 조회, 공개여부=false면 null 반환\n4. getBlocks(pageId): blocks.children 조회, NoticeBlock[] 반환\n5. mapNotionPageToNotice, mapNotionBlockToNoticeBlock 매퍼 구현\n6. __tests__/notion.test.ts: @notionhq/client mock으로 단위 테스트\n   - getNotices() 공개 공지만 반환 검증\n   - getNotice() null 반환 케이스 검증\n   - 환경변수 없을때 에러 throw 검증",
+      "verificationCriteria": "npm run test 통과. getNotices/getNotice/getBlocks 단위 테스트 통과. 환경변수 미설정 시 에러 throw 확인.",
+      "analysisResult": "RoadMap.md 기반 Notion CMS 공지사항 게시판 MVP. Phase 1 완료(Next.js 16 + shadcn/ui + 훅 + 플레이스홀더). Phase 2~5를 5단계→16단계 순서로 구현. 핵심 제약: Next.js 16 params/searchParams는 Promise 타입, Notion API는 서버 컴포넌트 전용, revalidate=60, TDD(테스트→구현→통과), 각 단계 완료 후 Playwright MCP 검증."
+    },
+    {
+      "id": "7e604593-8ab3-48ab-961f-658c70336c87",
+      "name": "7단계: 공지 카드 컴포넌트",
+      "description": "components/notice/notice-card.tsx 생성. 공지 목록에서 각 공지를 카드 형태로 표시.",
+      "notes": "날짜 포맷: publishedAt을 'YYYY.MM.DD' 형식으로 표시. Lucide 아이콘: Calendar, Pin. shadcn Badge variant: default(카테고리), destructive(중요).",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "31ec17e9-a622-45aa-ae1d-ea9ad476b74a"
+        }
+      ],
+      "createdAt": "2026-04-06T00:06:53.339Z",
+      "updatedAt": "2026-04-06T00:06:53.339Z",
+      "relatedFiles": [
+        {
+          "path": "components/notice/notice-card.tsx",
+          "type": "CREATE",
+          "description": "공지 카드 컴포넌트"
+        },
+        {
+          "path": "__tests__/notice-card.test.tsx",
+          "type": "CREATE",
+          "description": "단위 테스트"
+        },
+        {
+          "path": "components/ui/card.tsx",
+          "type": "DEPENDENCY",
+          "description": "shadcn Card"
+        },
+        {
+          "path": "components/ui/badge.tsx",
+          "type": "DEPENDENCY",
+          "description": "shadcn Badge"
+        },
+        {
+          "path": "types/notice.ts",
+          "type": "DEPENDENCY",
+          "description": "Notice 타입"
+        }
+      ],
+      "implementationGuide": "1. components/notice/notice-card.tsx 생성 (Server Component)\n2. props: { notice: Notice }\n3. shadcn Card + CardHeader + CardContent 활용\n4. 제목(title), 요약(summary), 게시일(Calendar 아이콘 + 포맷), 카테고리(Badge)\n5. isPinned=true: Pin 아이콘 + '중요' Badge (destructive variant)\n6. Next.js Link로 /notices/[id] 이동 (카드 전체 클릭)\n7. __tests__/notice-card.test.tsx: render 후 제목/카테고리/중요Badge 표시 검증\n8. Playwright MCP로 브라우저 렌더링 확인",
+      "verificationCriteria": "npm run test 통과. 카드에 제목/요약/게시일/카테고리 표시. isPinned=true 시 중요 배지 표시. 클릭 시 /notices/[id] 링크. Playwright MCP 렌더링 확인.",
+      "analysisResult": "RoadMap.md 기반 Notion CMS 공지사항 게시판 MVP. Phase 1 완료(Next.js 16 + shadcn/ui + 훅 + 플레이스홀더). Phase 2~5를 5단계→16단계 순서로 구현. 핵심 제약: Next.js 16 params/searchParams는 Promise 타입, Notion API는 서버 컴포넌트 전용, revalidate=60, TDD(테스트→구현→통과), 각 단계 완료 후 Playwright MCP 검증."
+    },
+    {
+      "id": "cb2bfeec-4e6e-4c4b-aeed-5195ad196782",
+      "name": "8단계: 카테고리 탭 컴포넌트",
+      "description": "components/notice/category-tabs.tsx 생성. URL 쿼리 파라미터 기반 카테고리 필터 탭 UI.",
+      "notes": "useSearchParams는 Suspense boundary 내에서 사용 필요. 카테고리 목록은 부모(app/page.tsx)에서 Notion DB 데이터로 전달.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "31ec17e9-a622-45aa-ae1d-ea9ad476b74a"
+        }
+      ],
+      "createdAt": "2026-04-06T00:06:53.339Z",
+      "updatedAt": "2026-04-06T00:06:53.339Z",
+      "relatedFiles": [
+        {
+          "path": "components/notice/category-tabs.tsx",
+          "type": "CREATE",
+          "description": "카테고리 탭 컴포넌트"
+        },
+        {
+          "path": "__tests__/category-tabs.test.tsx",
+          "type": "CREATE",
+          "description": "단위 테스트"
+        },
+        {
+          "path": "components/ui/tabs.tsx",
+          "type": "DEPENDENCY",
+          "description": "shadcn Tabs"
+        }
+      ],
+      "implementationGuide": "1. components/notice/category-tabs.tsx 생성 ('use client')\n2. props: { categories: string[]; currentCategory: string }\n3. shadcn Tabs 활용. '전체' 탭 + categories 동적 탭\n4. useRouter + useSearchParams로 URL ?category=xxx 업데이트\n5. 탭 클릭 시 router.push('/?category=xxx') 또는 '/' (전체)\n6. __tests__/category-tabs.test.tsx: 탭 렌더링, 클릭 시 URL 변경 검증\n7. Playwright MCP로 탭 클릭/URL 변경 확인",
+      "verificationCriteria": "npm run test 통과. '전체' + 동적 카테고리 탭 렌더링. 탭 클릭 시 URL ?category 파라미터 업데이트. Playwright MCP 탭 동작 확인.",
+      "analysisResult": "RoadMap.md 기반 Notion CMS 공지사항 게시판 MVP. Phase 1 완료(Next.js 16 + shadcn/ui + 훅 + 플레이스홀더). Phase 2~5를 5단계→16단계 순서로 구현. 핵심 제약: Next.js 16 params/searchParams는 Promise 타입, Notion API는 서버 컴포넌트 전용, revalidate=60, TDD(테스트→구현→통과), 각 단계 완료 후 Playwright MCP 검증."
+    },
+    {
+      "id": "30497656-74f3-4815-b57b-b247fb1c427a",
+      "name": "9단계: 블록 렌더러 컴포넌트",
+      "description": "components/notice/block-renderer.tsx 생성. Notion 블록 9가지 타입 렌더링 + Rich Text 처리.",
+      "notes": "groupListItems 로직이 가장 복잡. 이전 블록과 타입이 같으면 같은 그룹에 추가, 다르면 새 그룹 시작. Tailwind 클래스로 스타일링.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "31ec17e9-a622-45aa-ae1d-ea9ad476b74a"
+        }
+      ],
+      "createdAt": "2026-04-06T00:06:53.339Z",
+      "updatedAt": "2026-04-06T00:06:53.339Z",
+      "relatedFiles": [
+        {
+          "path": "components/notice/block-renderer.tsx",
+          "type": "CREATE",
+          "description": "블록 렌더러 컴포넌트"
+        },
+        {
+          "path": "__tests__/block-renderer.test.tsx",
+          "type": "CREATE",
+          "description": "단위 테스트"
+        },
+        {
+          "path": "types/notice.ts",
+          "type": "DEPENDENCY",
+          "description": "NoticeBlock, RichText 타입"
+        }
+      ],
+      "implementationGuide": "1. components/notice/block-renderer.tsx 생성 (Server Component)\n2. props: { blocks: NoticeBlock[] }\n3. 블록 타입별 렌더링:\n   - paragraph: <p> + renderRichText()\n   - heading_1/2/3: <h1>/<h2>/<h3>\n   - bulleted_list_item: groupListItems() 후 <ul><li>\n   - numbered_list_item: groupListItems() 후 <ol><li>\n   - code: <pre><code>\n   - image: <img> (external/file URL)\n   - quote: <blockquote>\n   - callout: 아이콘 + div\n   - divider: <hr>\n4. groupListItems(blocks): 연속 같은 타입 list_item을 묶는 헬퍼\n5. renderRichText(richText): bold/italic/strikethrough/code/link/color span 렌더링\n6. 미지원 타입: '이 콘텐츠는 Notion에서 확인해주세요' fallback\n7. __tests__/block-renderer.test.tsx: 각 블록 타입별 렌더링 검증",
+      "verificationCriteria": "npm run test 통과. 9가지 블록 타입 렌더링. 연속 list_item 그룹핑. Rich Text bold/italic/link 렌더링. 미지원 타입 fallback. Playwright MCP 렌더링 확인.",
+      "analysisResult": "RoadMap.md 기반 Notion CMS 공지사항 게시판 MVP. Phase 1 완료(Next.js 16 + shadcn/ui + 훅 + 플레이스홀더). Phase 2~5를 5단계→16단계 순서로 구현. 핵심 제약: Next.js 16 params/searchParams는 Promise 타입, Notion API는 서버 컴포넌트 전용, revalidate=60, TDD(테스트→구현→통과), 각 단계 완료 후 Playwright MCP 검증."
+    },
+    {
+      "id": "922bdba7-b431-42de-b95a-0ddf48b1c1f1",
+      "name": "10단계: 목록 페이지 완성 (F001, F002, F003)",
+      "description": "app/page.tsx 재구현. Notion DB에서 공지 목록 fetch, 중요 공지 상단 고정, 카테고리 필터 연동.",
+      "notes": "searchParams는 반드시 await. CategoryTabs는 Suspense로 감싸기(useSearchParams 사용). getNotices 실패 시 app/error.tsx로 에러 전파.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "e18098f8-2357-471c-8a0e-36ea1657ccc8"
+        },
+        {
+          "taskId": "7e604593-8ab3-48ab-961f-658c70336c87"
+        },
+        {
+          "taskId": "cb2bfeec-4e6e-4c4b-aeed-5195ad196782"
+        }
+      ],
+      "createdAt": "2026-04-06T00:06:53.339Z",
+      "updatedAt": "2026-04-06T00:06:53.339Z",
+      "relatedFiles": [
+        {
+          "path": "app/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "목록 페이지 재구현"
+        },
+        {
+          "path": "app/loading.tsx",
+          "type": "REFERENCE",
+          "description": "기존 Skeleton 로딩 UI 재사용"
+        },
+        {
+          "path": "app/error.tsx",
+          "type": "REFERENCE",
+          "description": "에러 바운더리"
+        },
+        {
+          "path": "lib/notion.ts",
+          "type": "DEPENDENCY",
+          "description": "getNotices 함수"
+        },
+        {
+          "path": "components/notice/notice-card.tsx",
+          "type": "DEPENDENCY",
+          "description": "공지 카드"
+        },
+        {
+          "path": "components/notice/category-tabs.tsx",
+          "type": "DEPENDENCY",
+          "description": "카테고리 탭"
+        }
+      ],
+      "implementationGuide": "1. app/page.tsx: Server Component\n2. export const revalidate = 60\n3. searchParams: Promise<{ category?: string }> await 처리 (Next.js 16)\n4. getNotices(category) 호출\n5. 중요 공지 상단 고정 정렬: [...pinned, ...normal] (각각 게시일 내림차순)\n6. 카테고리 목록 추출: [...new Set(notices.map(n => n.category))]\n7. CategoryTabs + NoticeCard 목록 렌더링\n8. 빈 상태: '등록된 공지사항이 없습니다'\n9. Suspense boundary + app/loading.tsx Skeleton 활용",
+      "verificationCriteria": "공지 목록 렌더링. 중요 공지 상단 표시. 카테고리 탭 클릭 시 필터링. 빈 상태 UI. Playwright MCP E2E 검증.",
+      "analysisResult": "RoadMap.md 기반 Notion CMS 공지사항 게시판 MVP. Phase 1 완료(Next.js 16 + shadcn/ui + 훅 + 플레이스홀더). Phase 2~5를 5단계→16단계 순서로 구현. 핵심 제약: Next.js 16 params/searchParams는 Promise 타입, Notion API는 서버 컴포넌트 전용, revalidate=60, TDD(테스트→구현→통과), 각 단계 완료 후 Playwright MCP 검증."
+    },
+    {
+      "id": "1dd1c22c-29e9-4d44-9f4f-b4a0de40cd9c",
+      "name": "11단계: 상세 페이지 완성 (F004, F010)",
+      "description": "app/notices/[id]/page.tsx 재구현. 공지 상세 조회 및 Notion 블록 본문 렌더링.",
+      "notes": "generateMetadata도 params를 await해야 함(Next.js 16). 공개여부=false는 getNotice에서 null 반환 → notFound()로 처리.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "e18098f8-2357-471c-8a0e-36ea1657ccc8"
+        },
+        {
+          "taskId": "30497656-74f3-4815-b57b-b247fb1c427a"
+        }
+      ],
+      "createdAt": "2026-04-06T00:06:53.339Z",
+      "updatedAt": "2026-04-06T00:06:53.339Z",
+      "relatedFiles": [
+        {
+          "path": "app/notices/[id]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "상세 페이지 재구현"
+        },
+        {
+          "path": "app/notices/[id]/error.tsx",
+          "type": "CREATE",
+          "description": "상세 페이지 에러 바운더리"
+        },
+        {
+          "path": "lib/notion.ts",
+          "type": "DEPENDENCY",
+          "description": "getNotice, getBlocks 함수"
+        },
+        {
+          "path": "components/notice/block-renderer.tsx",
+          "type": "DEPENDENCY",
+          "description": "블록 렌더러"
+        },
+        {
+          "path": "components/ui/badge.tsx",
+          "type": "DEPENDENCY",
+          "description": "카테고리/중요 배지"
+        }
+      ],
+      "implementationGuide": "1. app/notices/[id]/page.tsx: Server Component\n2. export const revalidate = 60\n3. params: Promise<{ id: string }> await 처리 (Next.js 16)\n4. getNotice(id): null이면 notFound()\n5. getBlocks(id): NoticeBlock[] 조회\n6. generateMetadata({ params }): { title: notice.title } 반환\n7. 헤더: 제목, 게시일(Calendar), 카테고리 Badge, isPinned시 중요 Badge\n8. BlockRenderer로 본문 렌더링\n9. '목록으로 돌아가기': ArrowLeft 아이콘 + Link href='/'\n10. app/notices/[id]/error.tsx 생성 (상세 페이지 전용 에러 바운더리)",
+      "verificationCriteria": "공지 상세 렌더링. 블록 본문 표시. 동적 메타데이터. 잘못된 ID → 404. 목록 복귀 버튼 동작. Playwright MCP E2E 검증.",
+      "analysisResult": "RoadMap.md 기반 Notion CMS 공지사항 게시판 MVP. Phase 1 완료(Next.js 16 + shadcn/ui + 훅 + 플레이스홀더). Phase 2~5를 5단계→16단계 순서로 구현. 핵심 제약: Next.js 16 params/searchParams는 Promise 타입, Notion API는 서버 컴포넌트 전용, revalidate=60, TDD(테스트→구현→통과), 각 단계 완료 후 Playwright MCP 검증."
+    },
+    {
+      "id": "8b4be922-3349-437f-99bd-2737aa604790",
+      "name": "12단계: 통합 테스트",
+      "description": "Playwright MCP로 E2E 시나리오 전체 검증. 목록/상세/에러/404 케이스 커버.",
+      "notes": "실제 Notion DB 연결 필요(NOTION_API_KEY, NOTION_DATABASE_ID 설정). npm run dev 실행 후 Playwright MCP로 localhost:3000 접근.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "922bdba7-b431-42de-b95a-0ddf48b1c1f1"
+        },
+        {
+          "taskId": "1dd1c22c-29e9-4d44-9f4f-b4a0de40cd9c"
+        }
+      ],
+      "createdAt": "2026-04-06T00:07:34.865Z",
+      "updatedAt": "2026-04-06T00:07:34.865Z",
+      "relatedFiles": [
+        {
+          "path": "app/page.tsx",
+          "type": "REFERENCE",
+          "description": "목록 페이지"
+        },
+        {
+          "path": "app/notices/[id]/page.tsx",
+          "type": "REFERENCE",
+          "description": "상세 페이지"
+        }
+      ],
+      "implementationGuide": "1. Playwright MCP로 다음 시나리오 순차 검증:\n   - 목록 페이지: 공지 목록 렌더링, 중요 공지 상단 고정 확인\n   - 카테고리 탭 클릭 → 필터링 동작 확인\n   - 공지 카드 클릭 → 상세 페이지 이동 확인\n   - 상세 페이지: 제목/날짜/카테고리/본문 블록 렌더링 확인\n   - '목록으로 돌아가기' 클릭 → 목록 복귀 확인\n   - 존재하지 않는 ID 접근 → 404 페이지 표시 확인\n   - Notion API 오류 시 에러 UI 표시 확인",
+      "verificationCriteria": "모든 E2E 시나리오 통과. 404/에러 케이스 정상 처리. Playwright MCP 스크린샷으로 UI 확인.",
+      "analysisResult": "RoadMap.md Phase 4~5: 에러 핸들링, 반응형/접근성, 빌드 최적화, Vercel 배포"
+    },
+    {
+      "id": "5ea39017-ad44-403f-b6b2-90c33588bd73",
+      "name": "13단계: 에러 핸들링 강화",
+      "description": "Notion API 실패 에러 UI, 상세 페이지 에러 바운더리, 공개여부=false 처리 검증.",
+      "notes": "app/error.tsx는 이미 존재(기본 구현). 내용 개선 중심. 에러 바운더리는 'use client' 필수.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "8b4be922-3349-437f-99bd-2737aa604790"
+        }
+      ],
+      "createdAt": "2026-04-06T00:07:34.865Z",
+      "updatedAt": "2026-04-06T00:07:34.865Z",
+      "relatedFiles": [
+        {
+          "path": "app/error.tsx",
+          "type": "TO_MODIFY",
+          "description": "목록 페이지 에러 바운더리 개선"
+        },
+        {
+          "path": "app/notices/[id]/error.tsx",
+          "type": "CREATE",
+          "description": "상세 페이지 에러 바운더리"
+        },
+        {
+          "path": "lib/notion.ts",
+          "type": "REFERENCE",
+          "description": "에러 throw 확인"
+        }
+      ],
+      "implementationGuide": "1. app/error.tsx 확인 및 '공지사항을 불러올 수 없습니다' + 새로고침 버튼 메시지 개선\n2. app/notices/[id]/error.tsx 생성 (11단계에서 미생성 시)\n   - '공지를 불러올 수 없습니다' 메시지\n   - '목록으로 돌아가기' 버튼\n3. lib/notion.ts에서 API 오류 시 적절한 에러 throw 확인\n4. 미지원 블록 fallback 메시지 동작 확인\n5. Playwright MCP로 에러 케이스 시뮬레이션 검증",
+      "verificationCriteria": "API 실패 시 에러 UI 표시. 상세 페이지 에러 바운더리 동작. 공개여부=false → 404 확인. Playwright MCP 검증.",
+      "analysisResult": "RoadMap.md Phase 4~5: 에러 핸들링, 반응형/접근성, 빌드 최적화, Vercel 배포"
+    },
+    {
+      "id": "9008fba5-0f29-4b12-b838-5522392335af",
+      "name": "14단계: 반응형 및 접근성 점검",
+      "description": "모바일/태블릿/데스크톱 레이아웃 검증, aria-label, 키보드 내비게이션, 다크모드 대비.",
+      "notes": "use-media-query 훅(hooks/use-media-query.ts) 활용 가능. 기존 Header의 모바일 반응형 패턴 참고.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "5ea39017-ad44-403f-b6b2-90c33588bd73"
+        }
+      ],
+      "createdAt": "2026-04-06T00:07:34.865Z",
+      "updatedAt": "2026-04-06T00:07:34.865Z",
+      "relatedFiles": [
+        {
+          "path": "components/notice/notice-card.tsx",
+          "type": "TO_MODIFY",
+          "description": "aria-label, 반응형"
+        },
+        {
+          "path": "components/notice/category-tabs.tsx",
+          "type": "TO_MODIFY",
+          "description": "모바일 스크롤 처리"
+        },
+        {
+          "path": "hooks/use-media-query.ts",
+          "type": "REFERENCE",
+          "description": "반응형 훅"
+        }
+      ],
+      "implementationGuide": "1. Playwright MCP로 뷰포트 변경 테스트:\n   - 모바일: 375px, 태블릿: 768px, 데스크톱: 1280px\n2. 공지 카드 그리드 반응형 확인 (모바일 1열, 데스크톱 2-3열)\n3. 카테고리 탭 모바일 스크롤 처리 (overflow-x-auto)\n4. aria-label 추가: 공지 카드('공지 제목 읽기'), 카테고리 탭, 뒤로가기 버튼\n5. 키보드 Tab/Enter 내비게이션 확인\n6. 다크모드 전환 후 색상 대비 확인",
+      "verificationCriteria": "모바일/태블릿/데스크톱 레이아웃 정상. aria-label 적용. 키보드 내비게이션 동작. 다크모드 색상 대비 확인.",
+      "analysisResult": "RoadMap.md Phase 4~5: 에러 핸들링, 반응형/접근성, 빌드 최적화, Vercel 배포"
+    },
+    {
+      "id": "e096930e-6c91-4b7b-b5e5-335a1e84978d",
+      "name": "15단계: 빌드 검증 및 성능 최적화",
+      "description": "npm run build 오류 없음 확인, TypeScript strict 경고 해소, Lighthouse 성능 점수 80+ 달성.",
+      "notes": "next/image 사용 시 next.config.ts에 remotePatterns 설정 필요. Notion 이미지는 amazonaws.com 도메인.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "9008fba5-0f29-4b12-b838-5522392335af"
+        }
+      ],
+      "createdAt": "2026-04-06T00:07:34.865Z",
+      "updatedAt": "2026-04-06T00:07:34.865Z",
+      "relatedFiles": [
+        {
+          "path": "next.config.ts",
+          "type": "TO_MODIFY",
+          "description": "이미지 도메인 설정"
+        },
+        {
+          "path": "tsconfig.json",
+          "type": "REFERENCE",
+          "description": "strict 모드 설정 확인"
+        }
+      ],
+      "implementationGuide": "1. npm run build 실행 → 오류/경고 해소\n2. TypeScript strict 모드 경고 전체 확인 및 수정\n3. image 블록: next/image 컴포넌트 적용 검토 (외부 이미지 도메인 next.config.ts에 추가)\n4. npm run test 전체 통과 확인\n5. Playwright MCP로 Lighthouse 성능 점수 확인 (Performance 80+)\n6. 번들 사이즈 점검 (next build 출력에서 확인)",
+      "verificationCriteria": "npm run build 오류 없음. npm run test 전체 통과. TypeScript 경고 없음. Lighthouse Performance 80+.",
+      "analysisResult": "RoadMap.md Phase 4~5: 에러 핸들링, 반응형/접근성, 빌드 최적화, Vercel 배포"
+    },
+    {
+      "id": "323df988-e178-4890-b039-f3a798fd7bcf",
+      "name": "16단계: Vercel 배포",
+      "description": "Vercel 프로젝트 생성, 환경 변수 설정, 프로덕션 배포 및 전체 기능 검증.",
+      "notes": "README.md 업데이트는 예외적으로 허용(배포 문서). .env.local.example 참고하여 Vercel 환경 변수 가이드 작성.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "e096930e-6c91-4b7b-b5e5-335a1e84978d"
+        }
+      ],
+      "createdAt": "2026-04-06T00:07:34.865Z",
+      "updatedAt": "2026-04-06T00:07:34.865Z",
+      "relatedFiles": [
+        {
+          "path": "README.md",
+          "type": "TO_MODIFY",
+          "description": "배포 가이드 업데이트"
+        },
+        {
+          "path": ".env.local.example",
+          "type": "REFERENCE",
+          "description": "환경 변수 목록"
+        },
+        {
+          "path": "next.config.ts",
+          "type": "REFERENCE",
+          "description": "Next.js 설정"
+        }
+      ],
+      "implementationGuide": "1. Vercel CLI 또는 웹 대시보드로 프로젝트 생성\n2. GitHub 레포지토리 연결\n3. Vercel 환경 변수 설정: NOTION_API_KEY, NOTION_DATABASE_ID\n4. vercel --prod 배포 실행\n5. 프로덕션 URL에서 Playwright MCP로 전체 기능 E2E 검증\n6. README.md 업데이트: 배포 URL, 환경 변수 설정 방법, 로컬 개발 가이드",
+      "verificationCriteria": "Vercel 배포 성공. 프로덕션 URL 접근 가능. 전체 기능 E2E 정상 동작. README.md 업데이트 완료.",
+      "analysisResult": "RoadMap.md Phase 4~5: 에러 핸들링, 반응형/접근성, 빌드 최적화, Vercel 배포"
+    }
+  ]
+}
