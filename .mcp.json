@@ -9,7 +9,7 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "C:\\Users\\Owner\\workspace\\claude-nextjs-starter"
+        "C:\\Users\\Owner\\workspace\\notion-cms-project"
       ]
     },
     "playwright": {
